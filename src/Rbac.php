@@ -203,7 +203,7 @@ class Rbac
             throw new Exception('父角色不存在');
         }
 
-        $nestedObj = new NestedSets($this->roleTable);
+        $nestedObj = new NestedSets(config('database.prefix').$this->roleTable);
         return $nestedObj->insert($parentId, $data);
 
     }
@@ -216,7 +216,7 @@ class Rbac
      */
     public function moveRole($id, $parentId)
     {
-        $nestedObj = new NestedSets($this->roleTable);
+        $nestedObj = new NestedSets(config('database.prefix').$this->roleTable);
         return $nestedObj->moveUnder($id, $parentId);
     }
 
@@ -245,7 +245,7 @@ class Rbac
      */
     public function getRole($id, $child = false)
     {
-        $nestedObj = new NestedSets($this->roleTable);
+        $nestedObj = new NestedSets(config('database.prefix').$this->roleTable);
         if ($child) {
             return $nestedObj->getPath($id);
         }else{
@@ -271,7 +271,7 @@ class Rbac
         Db::startTrans();
 
         try{
-            $nestedObj = new NestedSets($this->roleTable);
+            $nestedObj = new NestedSets(config('database.prefix').$this->roleTable);
             if ($nestedObj->delete($id) === false) {
                 Db::rollback();
                 return false;
