@@ -87,7 +87,7 @@ class Rbac
             throw new Exception('传入参数错误');
         }
 
-        return Db::name($this->permissionTable)
+        return Db::table($this->permissionTable)
             ->insert($data);
     }
 
@@ -104,7 +104,7 @@ class Rbac
             throw new Exception('参数错误');
         }
 
-        $dbObj = Db::name($this->permissionTable);
+        $dbObj = Db::table($this->permissionTable);
 
         if (empty($id)) {
             if (!isset($data[$dbObj->getPk()])) {
@@ -142,7 +142,7 @@ class Rbac
             throw new Exception('参数错误');
         }
 
-        if (Db::name($this->permissionTable)->delete($id) === false) {
+        if (Db::table($this->permissionTable)->delete($id) === false) {
             return false;
         }
 
@@ -161,7 +161,7 @@ class Rbac
             throw new Exception('请按照tp5条件语句的方式传入字符串或数组的条件');
         }
 
-        if (Db::name($this->permissionTable)->where($condition)->delete() === false) {
+        if (Db::table($this->permissionTable)->where($condition)->delete() === false) {
             return false;
         }
 
@@ -175,7 +175,7 @@ class Rbac
      */
     public function getPermission($condition)
     {
-        $dbObj = Db::name($this->permissionTable);
+        $dbObj = Db::table($this->permissionTable);
         if (is_numeric($condition)) {
             return $dbObj->where($dbObj->getPk(), $condition)->find();
         }
@@ -228,7 +228,7 @@ class Rbac
      */
     public function editRole($data)
     {
-        $dbObj = Db::name($this->roleTable);
+        $dbObj = Db::table($this->roleTable);
 
         if (!isset($data[$dbObj->getPk()])) {
             throw new Exception('数据中必须包含主键');
@@ -249,7 +249,7 @@ class Rbac
         if ($child) {
             return $nestedObj->getPath($id);
         }else{
-            $dbObj = Db::name($this->roleTable);
+            $dbObj = Db::table($this->roleTable);
             return $dbObj->where($dbObj->getPk(), $id)->find();
         }
 
@@ -277,7 +277,7 @@ class Rbac
                 return false;
             }
 
-            if (Db::name($this->rolePermissionTable)->where('role_id', $id)->delete() === false) {
+            if (Db::table($this->rolePermissionTable)->where('role_id', $id)->delete() === false) {
                 Db::rollback();
                 return false;
             }
@@ -310,7 +310,7 @@ class Rbac
             $userRole [] = ['user_id' => $userId, 'role_id' => $v];
         }
 
-        return Db::name($this->userRoleTable)->insertAll($userRole);
+        return Db::table($this->userRoleTable)->insertAll($userRole);
     }
 
     /**
@@ -332,7 +332,7 @@ class Rbac
             $rolePermission [] = ['role_id' => $roleId, 'permission_id' => $v];
         }
 
-        return Db::name($this->rolePermissionTable)->insertAll($rolePermission);
+        return Db::table($this->rolePermissionTable)->insertAll($rolePermission);
     }
 
     /**
@@ -349,13 +349,13 @@ class Rbac
 
         Db::startTrans();
 
-        $dbObj = Db::name($this->userTable);
+        $dbObj = Db::table($this->userTable);
         if ($dbObj->where($dbObj->getPk(), $id)->delete() === false) {
             Db::rollback();
             return false;
         }
 
-        if (Db::name($this->userRoleTable)->where('user_id', $id)->delete() === false) {
+        if (Db::table($this->userRoleTable)->where('user_id', $id)->delete() === false) {
             Db::rollback();
             return false;
         }
@@ -376,7 +376,7 @@ class Rbac
             throw new Exception('参数错误');
         }
 
-        return Db::name($this->userTable)->insert($data);
+        return Db::table($this->userTable)->insert($data);
     }
 
     /**
@@ -391,7 +391,7 @@ class Rbac
             throw new Exception('参数错误');
         }
 
-        $permission = Db::name($this->permissionTable)
+        $permission = Db::table($this->permissionTable)
             ->alias('p')
             ->join("{$this->rolePermissionTable} rp", "p.id = rp.permission_id")
             ->join("{$this->userRoleTable} ur", "rp.role_id = ur.role_id")
